@@ -96,9 +96,10 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
+          git pull --rebase origin main || true
           git add aura.svg
-          git commit -m "🎨 Update Git Aura [skip ci]"
-          git push
+          git commit -m "🎨 Update Git Aura [skip ci]" || echo "No changes to commit"
+          git push origin main
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4
