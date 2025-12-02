@@ -1,0 +1,107 @@
+name: Generate Git Aura
+
+on:
+  schedule:
+    # Run daily at midnight UTC
+    - cron: '0 0 * * *'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      username:
+        description: 'GitHub username (defaults to repository owner)'
+        required: false
+        type: string
+
+  # Also run on push to main for testing
+  push:
+    branches:
+      - main
+    paths:
+      - 'main.py'
+      - 'src/**'
+      - '.github/workflows/aura.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  generate-aura:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Determine username
+        id: user
+        run: |
+          if [ -n "${{ github.event.inputs.username }}" ]; then
+            echo "username=${{ github.event.inputs.username }}" >> $GITHUB_OUTPUT
+          else
+            echo "username=${{ github.repository_owner }}" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Calculate existing file hash
+        id: old_hash
+        run: |
+          if [ -f "aura.svg" ]; then
+            echo "hash=$(sha256sum aura.svg | cut -d' ' -f1)" >> $GITHUB_OUTPUT
+          else
+            echo "hash=none" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Generate Aura
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python main.py "${{ steps.user.outputs.username }}" \
+            --output aura.svg \
+            --width 800 \
+            --height 800 \
+            --verbose
+      
+      - name: Calculate new file hash
+        id: new_hash
+        run: |
+          echo "hash=$(sha256sum aura.svg | cut -d' ' -f1)" >> $GITHUB_OUTPUT
+      
+      - name: Check for changes
+        id: changes
+        run: |
+          if [ "${{ steps.old_hash.outputs.hash }}" = "${{ steps.new_hash.outputs.hash }}" ]; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes detected in aura.svg"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Changes detected in aura.svg"
+          fi
+      
+      - name: Commit and push if changed
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add aura.svg
+          git commit -m "🎨 Update Git Aura [skip ci]"
+          git push
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: aura-svg
+          path: aura.svg
+          retention-days: 30
