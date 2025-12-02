@@ -1,196 +1,340 @@
 # 🌌 Git-Aura
 
-> Transform your GitHub activity into a unique, mathematically-derived piece of generative art.
+<div align="center">
 
-<p align="center">
-  <img src="aura.svg" alt="Git Aura Example" width="400" />
-</p>
+![Git-Aura Banner](https://img.shields.io/badge/Git--Aura-Generative%20Art-blueviolet?style=for-the-badge&logo=github)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.11+-blue?style=flat-square&logo=python)](https://python.org)
+[![GitHub Actions](https://img.shields.io/github/actions/workflow/status/ThanhNguyxn/git-aura/aura.yml?style=flat-square&label=Aura%20Generation)](https://github.com/ThanhNguyxn/git-aura/actions)
 
-**Git-Aura** generates a beautiful, animated SVG visualization — your coding "aura" — based on your GitHub statistics. No more boring bar charts. This is art derived from math.
+**Transform your GitHub activity into a unique, mathematically-derived piece of generative art.**
 
-## ✨ Features
+<img src="aura.svg" alt="Git Aura Example" width="450" />
 
-- 🎨 **Unique Visual Identity**: Each aura is deterministically generated from your GitHub user ID
-- 🌈 **Language-Driven Colors**: Color palette derived from your top programming languages
-- 🌀 **Particle Flow Field**: Organic curves using Simplex noise algorithms
-- 💫 **Activity-Based Intensity**: Commit streaks influence the glow effect
-- 🌙 **Dark Mode Ready**: Designed for GitHub's dark theme
-- 🔄 **Daily Updates**: GitHub Action keeps your aura fresh
+*Your code has a soul. This is its aura.* ✨
+
+</div>
+
+---
+
+## 🎯 What is Git-Aura?
+
+Git-Aura analyzes your GitHub statistics and creates a **beautiful, animated SVG visualization** — your coding "aura". No more boring bar charts. This is **art derived from math**.
+
+### ✨ Features
+
+| Feature | Description |
+|---------|-------------|
+| 🎨 **Unique Identity** | Each aura is deterministically generated from your GitHub user ID |
+| 🌈 **Language Colors** | Color palette derived from your top programming languages |
+| 🌀 **Particle Flow** | Organic curves using Simplex noise algorithms |
+| 💫 **Activity Glow** | Commit streaks influence the glow intensity |
+| 🌙 **Dark Mode** | Designed for GitHub's dark theme |
+| 🔄 **Auto Updates** | GitHub Action keeps your aura fresh daily |
+
+---
 
 ## 🚀 Quick Start
 
-### Option 1: Fork & Use (Recommended)
+### ⚠️ Prerequisites (IMPORTANT!)
 
-1. **Fork this repository** to your GitHub account
+> **You MUST complete this step first, or the workflow will fail!**
 
-2. **Enable GitHub Actions** in your forked repo (Settings → Actions → Enable)
+<details open>
+<summary>🔑 <strong>Step 1: Create Personal Access Token (PAT)</strong></summary>
 
-3. **Run the workflow manually**:
-   - Go to Actions → "Generate Git Aura"
-   - Click "Run workflow"
-   - Enter your GitHub username (or leave empty to use repo owner)
+The default `GITHUB_TOKEN` cannot read user contribution data. Create a PAT:
 
-4. **Add to your profile README**:
-   ```markdown
-   ![My Git Aura](https://raw.githubusercontent.com/YOUR_USERNAME/git-aura/main/aura.svg)
-   ```
+1. 🔗 Go to **[github.com/settings/tokens/new](https://github.com/settings/tokens/new?description=git-aura&scopes=read:user)**
+2. ✏️ **Note:** `git-aura`
+3. ⏰ **Expiration:** 90 days (or custom)
+4. ☑️ **Select scope:** `read:user`
+5. 🟢 Click **"Generate token"**
+6. 📋 **Copy the token** (starts with `ghp_...`)
 
-### Option 2: Run Locally
+</details>
+
+<details open>
+<summary>🔐 <strong>Step 2: Add Token to Your Repository</strong></summary>
+
+1. Go to your **forked repository**
+2. Click **Settings** → **Secrets and variables** → **Actions**
+3. Click **"New repository secret"**
+4. Fill in:
+   | Field | Value |
+   |-------|-------|
+   | **Name** | `GH_PAT` |
+   | **Secret** | *paste your token* |
+5. Click **"Add secret"** ✅
+
+</details>
+
+---
+
+### 🍴 Option 1: Fork & Use (Recommended)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  1️⃣  Fork this repository                                   │
+│       └──▶ Click "Fork" button above                        │
+│                                                             │
+│  2️⃣  Add GH_PAT secret (see Prerequisites ☝️)               │
+│       └──▶ Settings → Secrets → Actions → New secret        │
+│                                                             │
+│  3️⃣  Run the workflow                                       │
+│       └──▶ Actions → "Generate Git Aura" → "Run workflow"   │
+│                                                             │
+│  4️⃣  Done! Your aura.svg is generated 🎉                    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### 📝 Add to Your Profile README:
+
+```markdown
+![My Git Aura](https://raw.githubusercontent.com/YOUR_USERNAME/git-aura/main/aura.svg)
+```
+
+---
+
+### 💻 Option 2: Run Locally
 
 ```bash
-# Clone the repository
+# 1. Clone the repository
 git clone https://github.com/ThanhNguyxn/git-aura.git
 cd git-aura
 
-# Install dependencies
+# 2. Install dependencies
 pip install -r requirements.txt
 
-# Set your GitHub token
-export GITHUB_TOKEN="your_github_personal_access_token"
+# 3. Set your GitHub token (with read:user scope)
+export GITHUB_TOKEN="ghp_your_token_here"
 
-# Generate your aura
-python main.py YOUR_GITHUB_USERNAME -o my-aura.svg
+# 4. Generate your aura! 🎨
+python main.py YOUR_USERNAME -o my-aura.svg
 ```
+
+---
 
 ## 📖 How It Works
 
-### The Math Behind Your Aura
+### 🧮 The Math Behind Your Aura
 
 Your GitHub activity is treated as a **feature vector** and transformed through mathematical functions:
 
-| Metric | Transformation | Visual Effect |
-|--------|---------------|---------------|
+```
+┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
+│  📊 GitHub Data │ ──▶ │  🔢 Normalize    │ ──▶ │  🎨 Visual      │
+│                 │     │                  │     │                 │
+│ • Commits       │     │ • Log scaling    │     │ • Particle      │
+│ • Streak        │     │ • Sigmoid        │     │   density       │
+│ • Languages     │     │ • Entropy        │     │ • Glow effect   │
+│ • Commit times  │     │ • Color blend    │     │ • Flow chaos    │
+└─────────────────┘     └──────────────────┘     └─────────────────┘
+```
+
+| Metric | Formula | Visual Effect |
+|--------|---------|---------------|
 | Total Commits | $\rho = \log(commits)$ | Particle density |
 | Max Streak | $I = \sigma(streak/365)$ | Glow intensity |
 | Commit Times | $\chi = H(distribution)$ | Flow turbulence |
-| Top Languages | Weighted RGB average | Color palette |
+| Languages | Weighted RGB average | Color palette |
 
-Where:
-- $\sigma$ = Sigmoid function for smooth normalization
-- $H$ = Shannon entropy for chaos measurement
+> **Legend:**
+> - $\sigma$ = Sigmoid function for smooth normalization
+> - $H$ = Shannon entropy for chaos measurement
 
-### The Generative Engine
+### 🌀 The Generative Engine
 
-1. **Particle Initialization**: Fibonacci spiral distribution from center
-2. **Flow Field**: Simplex noise creates organic vector forces
-3. **Simulation**: Particles trace paths through the field
-4. **Rendering**: Paths become SVG curves with glow effects
+```
+     🌱 Initialize                    🌊 Flow Field
+    ┌───────────┐                  ┌───────────────┐
+    │ Fibonacci │                  │ Simplex Noise │
+    │  Spiral   │ ──── drives ───▶│   Vectors     │
+    └───────────┘                  └───────────────┘
+          │                               │
+          ▼                               ▼
+    ┌───────────┐                  ┌───────────────┐
+    │ Particles │ ◀── guided by ──│ Force Field   │
+    └───────────┘                  └───────────────┘
+          │
+          ▼
+    ┌───────────────┐
+    │   SVG Paths   │ ──▶ 🎨 Final Aura
+    └───────────────┘
+```
+
+---
 
 ## ⚙️ Configuration
 
-### CLI Options
+### 🖥️ CLI Options
 
 ```bash
 python main.py [USERNAME] [OPTIONS]
-
-Arguments:
-  USERNAME              GitHub username (default: GITHUB_ACTOR env var)
-
-Options:
-  -o, --output PATH     Output SVG path (default: aura.svg)
-  -w, --width PIXELS    SVG width (default: 800)
-  -H, --height PIXELS   SVG height (default: 800)
-  --no-animation        Disable CSS animation
-  --check-changes       Only output if content changed
-  -v, --verbose         Enable debug logging
 ```
 
-### Environment Variables
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `USERNAME` | `$GITHUB_ACTOR` | GitHub username |
+| `-o, --output` | `aura.svg` | Output file path |
+| `-w, --width` | `800` | SVG width (px) |
+| `-H, --height` | `800` | SVG height (px) |
+| `--no-animation` | `false` | Disable CSS animation |
+| `--check-changes` | `false` | Only save if changed |
+| `-v, --verbose` | `false` | Debug logging |
+
+### 🔐 Environment Variables
 
 | Variable | Required | Description |
-|----------|----------|-------------|
-| `GITHUB_TOKEN` | ✅ | Personal access token with `read:user` scope |
+|:--------:|:--------:|-------------|
+| `GITHUB_TOKEN` | ✅ | PAT with `read:user` scope |
 | `GITHUB_ACTOR` | ❌ | Default username (auto-set in Actions) |
 
-## 🔧 GitHub Action Setup
+---
 
-The included workflow runs daily at midnight UTC. To customize:
+## 🔧 GitHub Action
+
+### ⏰ Schedule
+
+The workflow runs **daily at midnight UTC**. Customize in `.github/workflows/aura.yml`:
 
 ```yaml
-# .github/workflows/aura.yml
 on:
   schedule:
-    - cron: '0 0 * * *'  # Change schedule here
+    - cron: '0 0 * * *'  # ← Modify schedule here
 ```
 
-### Required Permissions
+### 🔒 Required Secrets
 
-The workflow needs `contents: write` permission to commit the updated SVG.
+| Secret Name | Required | How to Get |
+|-------------|:--------:|------------|
+| `GH_PAT` | ✅ | [Create token](https://github.com/settings/tokens/new?scopes=read:user) with `read:user` |
 
-### ⚠️ Setting Up Personal Access Token (Required)
+### 🚫 Preventing History Bloat
 
-The default `GITHUB_TOKEN` cannot read user contribution data. You need to create a Personal Access Token:
+The workflow compares file hashes before committing:
+- ✅ **Changed** → Commit & push
+- ⏭️ **Same** → Skip commit
 
-1. Go to [GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)](https://github.com/settings/tokens)
-2. Click **"Generate new token (classic)"**
-3. Give it a name like `git-aura`
-4. Select scopes: `read:user`
-5. Click **Generate token** and copy it
-6. In your repo, go to **Settings → Secrets and variables → Actions**
-7. Click **"New repository secret"**
-8. Name: `GH_PAT`, Value: paste your token
-9. Click **Add secret**
+---
 
-Now re-run the workflow!
+## 🎨 Customization
 
-### Preventing History Bloat
-
-The workflow compares file hashes before committing — if your aura hasn't changed, no commit is made.
-
-## 🎨 Customization Ideas
-
-### Change Canvas Size
+### 📐 Canvas Sizes
 
 ```bash
-python main.py username -w 1200 -H 600  # Wide banner format
+# Square (default)
+python main.py username -w 800 -H 800
+
+# Wide banner
+python main.py username -w 1200 -H 400
+
+# Vertical
+python main.py username -w 400 -H 800
 ```
 
-### Use in GitHub Profile
-
-Add to your profile `README.md`:
+### 🖼️ Profile README Example
 
 ```markdown
 <div align="center">
   <img src="https://raw.githubusercontent.com/YOUR_USERNAME/git-aura/main/aura.svg" width="400" />
-  <p><i>My coding aura ✨</i></p>
+  <br/>
+  <i>My coding aura ✨</i>
 </div>
 ```
+
+---
 
 ## 📁 Project Structure
 
 ```
 git-aura/
-├── .github/workflows/
-│   └── aura.yml              # Daily generation workflow
-├── src/
-│   ├── data_loader.py        # GitHub GraphQL API client
-│   ├── generative_engine.py  # Particle system & noise
-│   └── renderer.py           # SVG generation
-├── main.py                   # Entry point
-├── requirements.txt          # Python dependencies
-└── aura.svg                  # Generated output
+├── 📂 .github/
+│   └── 📂 workflows/
+│       └── 📄 aura.yml          # 🔄 Daily generation workflow
+├── 📂 src/
+│   ├── 📄 __init__.py           # 📦 Package init
+│   ├── 📄 data_loader.py        # 🔌 GitHub GraphQL API
+│   ├── 📄 generative_engine.py  # 🌀 Particle system & noise
+│   └── 📄 renderer.py           # 🎨 SVG generation
+├── 📄 main.py                   # 🚀 Entry point
+├── 📄 requirements.txt          # 📋 Dependencies
+├── 📄 README.md                 # 📖 You are here!
+└── 🖼️ aura.svg                  # ✨ Generated output
 ```
+
+---
 
 ## 🛠️ Tech Stack
 
-- **Python 3.11+**
-- **NumPy** — Vector mathematics
-- **svgwrite** — SVG generation
-- **OpenSimplex** — Noise functions
-- **requests** — GitHub API
+| Technology | Purpose |
+|------------|---------|
+| ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white) | Core language |
+| ![NumPy](https://img.shields.io/badge/NumPy-013243?style=flat-square&logo=numpy&logoColor=white) | Vector mathematics |
+| **svgwrite** | SVG generation |
+| **OpenSimplex** | Noise functions |
+| **requests** | GitHub API calls |
+
+---
+
+## ❓ Troubleshooting
+
+<details>
+<summary>🔴 <strong>Workflow fails with "GraphQL errors" or exit code 1</strong></summary>
+
+**Cause:** Missing or invalid `GH_PAT` secret.
+
+**Solution:**
+1. ✅ Check if `GH_PAT` secret exists: Settings → Secrets → Actions
+2. ✅ Ensure your token has `read:user` scope
+3. ✅ Token might be expired — regenerate if needed
+4. ✅ Re-run the workflow after adding the secret
+
+</details>
+
+<details>
+<summary>🔴 <strong>No aura.svg generated</strong></summary>
+
+**Cause:** Workflow completed but file not committed.
+
+**Solution:**
+1. Check Actions log for errors
+2. Verify `contents: write` permission in workflow
+3. Try running workflow manually
+
+</details>
+
+<details>
+<summary>🔴 <strong>Aura looks empty or minimal</strong></summary>
+
+**Cause:** Low GitHub activity or new account.
+
+**Solution:** This is expected! Your aura grows with your contributions. Keep coding! 💪
+
+</details>
+
+---
 
 ## 📄 License
 
-MIT License — feel free to fork, modify, and share!
+```
+MIT License - feel free to fork, modify, and share!
+```
+
+---
 
 ## 🙏 Credits
 
-Created by [@ThanhNguyxn](https://github.com/ThanhNguyxn)
+<div align="center">
+
+Created with 💜 by [@ThanhNguyxn](https://github.com/ThanhNguyxn)
 
 Inspired by the beauty of mathematical visualization and the art of code.
 
 ---
 
-<p align="center">
-  <i>Your code has a soul. This is its aura.</i>
-</p>
+⭐ **Star this repo if you like it!** ⭐
+
+[Report Bug](https://github.com/ThanhNguyxn/git-aura/issues) · [Request Feature](https://github.com/ThanhNguyxn/git-aura/issues)
+
+</div>
