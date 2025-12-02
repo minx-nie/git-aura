@@ -117,6 +117,22 @@ on:
 
 The workflow needs `contents: write` permission to commit the updated SVG.
 
+### ⚠️ Setting Up Personal Access Token (Required)
+
+The default `GITHUB_TOKEN` cannot read user contribution data. You need to create a Personal Access Token:
+
+1. Go to [GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)](https://github.com/settings/tokens)
+2. Click **"Generate new token (classic)"**
+3. Give it a name like `git-aura`
+4. Select scopes: `read:user`
+5. Click **Generate token** and copy it
+6. In your repo, go to **Settings → Secrets and variables → Actions**
+7. Click **"New repository secret"**
+8. Name: `GH_PAT`, Value: paste your token
+9. Click **Add secret**
+
+Now re-run the workflow!
+
 ### Preventing History Bloat
 
 The workflow compares file hashes before committing — if your aura hasn't changed, no commit is made.
